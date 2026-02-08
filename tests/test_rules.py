@@ -1,7 +1,4 @@
 from datetime import datetime, timezone
-
-import pytest
-
 from src.crew import Crew
 from src.flight import Flight
 from src.validator import can_assign_next, dynamic_rest_minutes
