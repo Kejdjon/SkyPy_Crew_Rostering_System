@@ -50,7 +50,7 @@ def main() -> None:
             print(f"- {f.flight_id} ({f.origin}->{f.destination} at {f.departure.isoformat()})")
 
     output = roster_to_json_dict(result.roster, crew_map)
-    out_path = Path("output_roster.json")
+    out_path = Path("outputs")/"output_roster.json"
     out_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
     print(f"\nWrote {out_path}")
 
