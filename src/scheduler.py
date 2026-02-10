@@ -32,15 +32,18 @@ def generate_schedule(flights: List[Flight], crew_list: List[Crew]) -> ScheduleR
 
     for fl in flights_sorted:
         placed = False
+        reasons = set()
         for crew in crew_list:
             current = roster.schedule.get(crew.crew_id, [])
-            ok, _reason = can_assign_next(crew, current, fl)
+            ok, reason = can_assign_next(crew, current, fl)
             if ok:
                 roster.assign(crew.crew_id, fl)
                 placed = True
                 break
+            reasons.add(reason)
         if not placed:
-            print(f"Unassigned: {fl.flight_id}")
+            reasons_str = ", ".join(sorted(reasons))
+            print(f"Unassigned: {fl.flight_id} (reasons: {reasons_str})")
             unassigned.append(fl)
 
     return ScheduleResult(roster=roster, unassigned=unassigned)

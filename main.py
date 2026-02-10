@@ -7,9 +7,9 @@ from typing import Dict, Any
 from src.io_utils import load_flights_csv, load_crew_csv, crew_by_id
 from src.scheduler import generate_schedule
 from src.validator import validate_roster
+from src.roster import Roster
 
-
-def roster_to_json_dict(roster, crew_map) -> Dict[str, Any]:
+def roster_to_json_dict(roster:Roster) -> Dict[str, Any]:
     out: Dict[str, Any] = {}
 
     for crew_id, flights in roster.schedule.items():
@@ -49,7 +49,7 @@ def main() -> None:
         for f in result.unassigned:
             print(f"- {f.flight_id} ({f.origin}->{f.destination} at {f.departure.isoformat()})")
 
-    output = roster_to_json_dict(result.roster, crew_map)
+    output = roster_to_json_dict(result.roster)
     out_path = Path("outputs")/"output_roster.json"
     out_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
     print(f"\nWrote {out_path}")
