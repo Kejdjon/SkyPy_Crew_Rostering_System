@@ -63,6 +63,7 @@ skypy-crew-rostering-system/
 ├─ requirements.txt
 ├─ pytest.ini
 └─ README.md
+```
 
 ## Scheduling Rules Implemented
 
@@ -80,11 +81,87 @@ A crew must end a flight at the same airport where the next flight begins.
 - Flight equal to or longer than 3 hours → **120 minutes** rest  
 
 ## Validation Result
+### Crew Roster Output
+
+```json
+{
+  "C001": {
+    "flights": [
+      "FL001",
+      "FL002",
+      "FL006",
+      "FL007",
+      "FL008"
+    ],
+    "total_hours": 10.5
+  },
+  "C002": {
+    "flights": [
+      "FL003",
+      "FL004",
+      "FL010",
+      "FL011",
+      "FL012"
+    ],
+    "total_hours": 22.5
+  },
+  "C003": {
+    "flights": [
+      "FL005",
+      "FL014",
+      "FL015"
+    ],
+    "total_hours": 14.5
+  },
+  "C004": {
+    "flights": [
+      "FL018",
+      "FL019"
+    ],
+    "total_hours": 3.0
+  },
+  "C005": {
+    "flights": [],
+    "total_hours": 0.0
+  },
+  "C006": {
+    "flights": [
+      "FL017"
+    ],
+    "total_hours": 1.5
+  },
+  "C007": {
+    "flights": [
+      "FL016"
+    ],
+    "total_hours": 1.5
+  },
+  "C008": {
+    "flights": [
+      "FL009"
+    ],
+    "total_hours": 3.0
+  },
+  "C009": {
+    "flights": [],
+    "total_hours": 0.0
+  },
+  "C010": {
+    "flights": [
+      "FL013"
+    ],
+    "total_hours": 3.0
+  }
+}
+```
 
 
-## List of unassigned flights with explanations
 
-- **FL020**  git
+
+
+### List of unassigned flights with explanations
+
+- **FL020**  
   - Route: `LHR → JFK`  
   - Departure: `2026-02-05T13:00:00+00:00`  
   - Reasons: `continuity`, `home_base_start`, `range`
