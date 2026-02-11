@@ -10,6 +10,7 @@ def dt(s: str) -> datetime:
 
 
 def test_range_limit_short_haul_cannot_take_long_haul():
+    # A crew with max_range_miles=2000 must reject a 3500-mile flight.
     crew = Crew(crew_id="C001", home_base="JFK", max_range_miles=2000)
     long_flight = Flight(
         flight_id="FL999",
@@ -19,12 +20,16 @@ def test_range_limit_short_haul_cannot_take_long_haul():
         arrival=dt("2024-02-01T16:00:00"),
         distance_miles=3500,
     )
+
+    # can_assign_next is the same incremental rule check used by the scheduler.
     ok, reason = can_assign_next(crew, [], long_flight)
     assert ok is False
     assert reason == "range"
 
 
 def test_dynamic_rest_long_flight_requires_longer_break():
+    # This test verifies ONLY the fatigue rule mapping:
+    # < 180 min => 60 minutes rest, >= 180 min => 120 minutes rest.
     short = Flight(
         flight_id="FL1",
         origin="JFK",
@@ -46,6 +51,7 @@ def test_dynamic_rest_long_flight_requires_longer_break():
 
 
 def test_home_base_start_first_flight_must_match_home_base():
+    # Start rule: the first assigned flight must depart from crew.home_base.
     crew = Crew(crew_id="C002", home_base="JFK", max_range_miles=5000)
     flight = Flight(
         flight_id="FL10",

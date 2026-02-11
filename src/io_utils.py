@@ -8,6 +8,7 @@ from .flight import Flight, parse_iso_utc
 
 
 def load_flights_csv(path: str) -> List[Flight]:
+    # CSV : validated Flight objects (bad rows fail fast).
     flights: List[Flight] = []
     with open(path, "r", newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -26,6 +27,7 @@ def load_flights_csv(path: str) -> List[Flight]:
 
 
 def load_crew_csv(path: str) -> List[Crew]:
+    # CSV : validated Crew objects.
     crew_list: List[Crew] = []
     with open(path, "r", newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -41,4 +43,5 @@ def load_crew_csv(path: str) -> List[Crew]:
 
 
 def crew_by_id(crew_list: List[Crew]) -> Dict[str, Crew]:
+    # Helper mapping for O(1) crew lookup during roster validation.
     return {c.crew_id: c for c in crew_list}

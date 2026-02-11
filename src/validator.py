@@ -11,11 +11,13 @@ from .roster import Roster
 
 @dataclass(frozen=True)
 class ValidationError:
+    # Used for post-scheduling validation/reporting.
     crew_id: str
     message: str
 
 
 def dynamic_rest_minutes(prev_flight: Flight) -> int:
+    # Fatigue management rule: longer flights require longer minimum rest.
     return 60 if prev_flight.duration_minutes < 180 else 120
 
 
@@ -40,17 +42,17 @@ def validate_chain_for_crew(crew: Crew, flights: List[Flight]) -> List[str]:
                 f"Range rule violated: {f.flight_id} distance {f.distance_miles} > max {crew.max_range_miles}"
             )
 
-        # Continuity + rest checks 
+         
         if i > 0:
             prev = flights[i - 1]
 
-            # Chain rule
+            # Continuity: where you land must match where the next flight departs.
             if prev.destination != f.origin:
                 errors.append(
                     f"Chain rule violated: {prev.flight_id} destination {prev.destination} != {f.flight_id} origin {f.origin}"
                 )
 
-            # Rest rule
+            # Dynamic rest: time between arrival and next departure must meet minimum.
             min_rest = dynamic_rest_minutes(prev)
             actual_rest = int((f.departure - prev.arrival).total_seconds() // 60)
             if actual_rest < min_rest:
@@ -72,7 +74,7 @@ def validate_roster(roster: Roster, crew_by_id: Dict[str, Crew]) -> List[Validat
         if crew is None:
             all_errors.append(ValidationError(crew_id, "Unknown crew_id in roster"))
             continue
-
+        # Ensure chronological order even if caller didn't preserve it.
         flights_sorted = sorted(flights, key=lambda f: f.departure)
         errs = validate_chain_for_crew(crew, flights_sorted)
         for e in errs:

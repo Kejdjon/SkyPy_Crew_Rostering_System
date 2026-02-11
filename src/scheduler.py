@@ -11,6 +11,7 @@ from .validator import can_assign_next
 
 @dataclass
 class ScheduleResult:
+    # Output includes both successful assignments and unassigned demand.
     roster: Roster
     unassigned: List[Flight]
 
@@ -26,22 +27,25 @@ def generate_schedule(flights: List[Flight], crew_list: List[Crew]) -> ScheduleR
     roster = Roster()
     unassigned: List[Flight] = []
 
-    # Ensure roster has keys for every crew 
+    # Ensure every crew_id exists in the schedule dict (even if they get zero flights),
+    # which simplifies JSON export and validation/reporting. 
     for c in crew_list:
         roster.schedule.setdefault(c.crew_id, [])
 
     for fl in flights_sorted:
         placed = False
-        reasons = set()
+        reasons = set()  # collect "why" it failed for transparency/debugging.
+
         for crew in crew_list:
             current = roster.schedule.get(crew.crew_id, [])
-            ok, reason = can_assign_next(crew, current, fl)
+            ok, reason = can_assign_next(crew, current, fl) # pre-check before assignment.
             if ok:
                 roster.assign(crew.crew_id, fl)
                 placed = True
                 break
             reasons.add(reason)
         if not placed:
+            # Log every distinct failing constraint encountered across crews.
             reasons_str = ", ".join(sorted(reasons))
             print(f"Unassigned: {fl.flight_id} (reasons: {reasons_str})")
             unassigned.append(fl)
